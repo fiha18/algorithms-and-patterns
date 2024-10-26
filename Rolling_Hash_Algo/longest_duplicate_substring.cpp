@@ -1,3 +1,5 @@
+#include <bits/stdc++.h>
+using namespace std;
 class Solution {
 #define p 1000007
 #define alphaLen 26
@@ -15,9 +17,7 @@ bool match(string input, int inputSize, int windowSize, string& pattern)
 	for(int i = 0; i < windowSize ; i++)
 	{
 		hash = (hash*alphaLen + (input[i] - globalFirstChar + 1))%p;
-        cout << input[i] << " " << hash << " "; 
 	}
-    cout << windowSize <<" hash value " << hash << endl;
 	map[hash].push_back(0);
 	// Sliding Window for pattern matching
 	for(int j = windowSize ; j < inputSize; j++)
@@ -26,10 +26,8 @@ bool match(string input, int inputSize, int windowSize, string& pattern)
         //((1392 - 26^2)*('b' - 'a' + 1)%1000007 = 40
         // + p is used to handle -ve values
 		hash = ((hash - rollingList[windowSize-1] * (input[j - windowSize] - globalFirstChar + 1))%p + p)%p; 
-        cout << "hash value : "<< hash << endl; 
         //((40*26)('a' - 'a' + 1) *mod* 1000007 = 1041
 		hash = (hash*alphaLen + (input[j] - globalFirstChar + 1))%p;
-        cout << "hash value : "<< hash << endl; 
 		if(map.find(hash) != map.end())
 		{
             // matching each characters for further validations
