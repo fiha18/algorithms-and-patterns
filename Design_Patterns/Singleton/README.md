@@ -41,7 +41,10 @@ public class SyncDBConnection {
 
     private SyncDBConnection() {}
 
-    // Thread-safe singleton instance creation
+    // Below code is thread-safe.
+    //But every time getInstance is called there is performance overhead
+    // Lock is created every time function is called either conn == null or not 
+    // Locks created = No of Threads
     synchronized public static SyncDBConnection getInstance() {
         if (connection == null) {
             connection = new SyncDBConnection();
@@ -68,11 +71,14 @@ public class DoubleLockDBConnection {
 
     private DoubleLockDBConnection() {}
 
-    // Double-checked locking implementation
+    // This involves checking if the singleton instance is null before acquiring a lock.
+    // If the instance is null, only then is the lock acquired to create the instance.
     public static DoubleLockDBConnection getInstance() {
         if (connection == null) {
+            // Maximum Lock == 2 , when 2 thread tries to compete here
             synchronized (DoubleLockDBConnection.class) {
                 if (connection == null) {
+                    // Due to synchronized only 1 thread reaches here and initialize
                     connection = new DoubleLockDBConnection();
                 }
             }
@@ -85,7 +91,7 @@ public class DoubleLockDBConnection {
 ### Explanation
 1. **Double-Checked Locking:** The instance is checked twice to avoid unnecessary synchronization once the instance is initialized.
 2. **Thread Safety:** Ensures that only one instance is created in multi-threaded environments.
-Performance: Reduces synchronization overhead compared to the SyncDBConnection by limiting it to the initial creation phase only.
+3. **Performance:** Reduces synchronization overhead compared to the SyncDBConnection by limiting it to the initial creation phase only.
 **Use Case:** Ideal for high-performance, multi-threaded applications where thread safety and resource efficiency are essential.
 
 
